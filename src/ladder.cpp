@@ -6,50 +6,23 @@ void error(string word1, string word2, string msg) {
 bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
     int size1 = str1.size();
     int size2 = str2.size();
-    bool shifted = false;
-    if (size1 == size2) {
-        for (int i = 0; i < size1 ; ++i) {
-            if (str1[i] != str2[i]) {
-                if (shifted) {
-                    return false;
-                } else {
-                    shifted = true;
-                }    
-            }
+    if (abs(size1 - size2) > d) return false;
+    int i = 0, j = 0, edits = 0;
+    while (i < size1 && j < size2) {
+        if (str1[i] != str2[j]) {
+            if (++edits > d) return false;
+            if (size1 > size2) i++;
+            else if (size1 < size2) j++;
+            else { i++; j++; }
+        } else {
+            i++;
+            j++;
         }
-        return true;
-    } else if (size1 > size2) {
-        for (int i = 0; i < size2; ++i) {
-            if (str2[i] != str1[i] && !shifted) {
-                shifted = true;
-            }
-            if (shifted) {
-                if (str2[i] != str1[i + 1]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    } else {
-        for (int i = 0; i < size1; ++i) {
-            if (str2[i] != str1[i] && !shifted) {
-                shifted = true;
-            }
-            if (shifted) {
-                if (str1[i] != str2[i + 1]) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
+    
+    return edits + (size1 - i) + (size2 - j) <= d; // Account for remaining chars
 }
 bool is_adjacent(const string& word1, const string& word2) {
-    int size1 = word1.size();
-    int size2 = word2.size();
-    if (size1 - size2 > 1 || size1 - size2 < -1) {
-        return false;
-    }
     return edit_distance_within(word1, word2, 1);
 }
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
