@@ -39,7 +39,7 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
         }
         cur = previous[cur];
     }
-    path = std::reverse(path.begin(), path.end())
+    std::reverse(path.begin(), path.end());
     return path;
 }
 void print_path(const vector<int>& v, int total) {
